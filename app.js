@@ -1,37 +1,42 @@
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const swagger = require('swagger');
-const morgan = require('morgan');
 const dotenv = require('dotenv');
-dotenv.config({ path: ".env.development"})
+dotenv.config();
 
+const routes = require("./routes/index");
 
 // ENV variables assignments
 const port = process.env.PORT || 3000,
-    dbURI = process.env.DB_URI ||'mongodb://localhost:27017/myDatabase';
+      dbURI = process.env.DB_URI;
 
-
-// back-end app instance
+// Back-end app instance
 const app = express();
 
+// Apply CORS before routes
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow only your frontend origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
-// setting up mongodb Cluster connection
+app.use(express.json()); // Parse JSON requests
+
+// Define routes
+app.use('/api/v1/', routes);
+
+
+// MongoDB Cluster connection
 mongoose
-.connect(dbURI)
-.then(() => {
+  .connect(dbURI)
+  .then(() => {
     console.log('MongoDB connected...');
-})
-.catch(err => {
+  })
+  .catch(err => {
     console.log(err);
-    
-})
+  });
 
-
-// Setting bacp-end app to run on a port
+// Setting back-end app to run on a port
 app.listen(port, () => {
-    console.log(`AWAL is running on http://localhost:${port}`);
-    
-})
+  console.log(`AWAL is running on http://localhost:${port}`);
+});

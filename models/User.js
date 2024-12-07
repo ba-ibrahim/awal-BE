@@ -1,15 +1,11 @@
-
-
-const mongoose = require('mongoose')
-
-
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    f_name: {
+    first_name: {
         type: String,
         required: true
     },
-    l_name: {
+    last_name: {
         type: String,
         required: true
     },
@@ -17,25 +13,58 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        match: [
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        ]
     },
     password: {
         type: String,
-        required: true,
-        minlength: 8
+        required: true
     },
-    isAdmin: {
+    field: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Field'
+    },
+    year: {
+        type: Number,
+        required: true
+    },
+    bookmarks: [{
+        item_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        item_type: {
+            type: String,
+            required: true,
+            enum: ['Post', 'Lesson'] // Ensures valid references
+        }
+    }],
+    meetings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Meeting'
+    }],
+    likes: [{
+        item_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        item_type: {
+            type: String,
+            required: true,
+            enum: ['Post', 'Lesson'] // Ensures valid references
+        }
+    }],
+    is_admin: {
         type: Boolean,
         default: false
     },
-    isSuperStudent: {
+    is_super_student: {
         type: Boolean,
         default: false
     }
-})
+});
 
+const User = mongoose.model('User', userSchema);
 
-
-const User = mongoose.model('User', userSchema)
-
-module.exports = User
+module.exports = User;
