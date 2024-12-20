@@ -2,31 +2,46 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
 dotenv.config();
 
 const routes = require("./routes/index");
 
-// ENV variables assignments
 const port = process.env.PORT || 3000,
       dbURI = process.env.DB_URI;
 
-// Back-end app instance
 const app = express();
 
-// Apply CORS before routes
+
 app.use(cors({
-  origin: '*', // Allow only your frontend origin
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(express.json()); // Parse JSON requests
+app.use(express.json());
 
-// Define routes
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'AWAL API',
+      version: '1.0.0',
+      description: 'API documentation for AWAL project',
+    },
+    host: `localhost:${port}`,
+    basePath: '/api/v1',
+  },
+  apis: ['./routes/*.js'],
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 app.use('/api/v1/', routes);
 
-
-// MongoDB Cluster connection
 mongoose
   .connect(dbURI)
   .then(() => {
@@ -36,7 +51,7 @@ mongoose
     console.log(err);
   });
 
-// Setting back-end app to run on a port
 app.listen(port, () => {
   console.log(`AWAL is running on http://localhost:${port}`);
+  console.log(`API documentation available at http://localhost:${port}/api-docs`);
 });
