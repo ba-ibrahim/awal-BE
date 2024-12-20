@@ -6,41 +6,47 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const register = async (req, res) => {
-    const { first_name, last_name, email, password, year, field_id  } = req.body
-    console.log(field_id, year)
-    try
-    {
+    const { first_name, last_name, email, password, year, field_id } = req.body;
+    
+    // If an image is uploaded, the file info will be available in `req.file`
+    const profileImageUrl = req.file ? req.file.path : ''; // If no file uploaded, use an empty string
+
+    try {
         // Check if user already exists
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ msg: 'User already exists' });
+            return res.status(400).json({ message: "User already exists" });
         }
 
-        // Get the field id from the field name
-        const field = await Field.findOne({ _id: field_id });
-
-        if (!field) {
-            return res.status(400).json({ msg: 'Invalid field name' });
+        // Validate field ID
+        const isFieldValid = await Field.exists({ _id: field_id });
+        if (!isFieldValid) {
+            return res.status(400).json({ message: "Invalid field ID" });
         }
-        const fieldId = field._id;
-        
+
         // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        
-        // Create a new user
-        const newUser = await User.create({ first_name, last_name, email, password: hashedPassword, year, field: fieldId });
-        
-        // Send back a success message and the user object
-        res.status(200).json({ msg: 'User registered successfully', user: newUser });
 
+        // Create a new user
+        const newUser = await User.create({
+            first_name,
+            last_name,
+            email,
+            password: hashedPassword,
+            year,
+            field: field_id,
+            profile_image: profileImageUrl,
+        });
+
+        // Respond with success
+        res.status(200).json({ message: "User registered successfully", user: newUser });
+    } catch (error) {
+        console.error("Server error:", error.message);
+        res.status(500).json({ message: error.message });
     }
-    catch (error)
-    {
-        console.error(error.message);
-        res.status(500).send('Server error');
-    }
-}
+};
+
 
 
 
@@ -62,7 +68,7 @@ const login = async (req, res) => {
         }
         
         // Create and send a JWT token
-        const token = await jwt.sign({ id: user._id, isAdmin: user.is_admin, isSupderStudent: user.is_super_student }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = await jwt.sign({ id: user._id, isAdmin: user.is_admin, isSupderStudent: user.is_super_student }, process.env.JWT_SECRET);
         res.status(200).json({ msg: 'User logged in successfully', token: token });
     }
     catch (error)
@@ -116,6 +122,19 @@ const forgotPassword = async (req, res) => {
         // Send the OTP to the user's email
         // fixme: debug: this is not working because of the email sending note:
 
+    }
+    catch (error)
+    {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+}
+
+const verifyOtp = async (req, res) => {
+    const { otp } = req.body;
+    try
+    {
+        
     }
     catch (error)
     {

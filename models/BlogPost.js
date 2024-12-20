@@ -12,6 +12,10 @@ const blogPostSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    thumbnail: {
+        type: String,
+        default: 'image/'
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

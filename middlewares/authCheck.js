@@ -7,11 +7,16 @@ dotenv.config();
 
 async function authCheck(req, res, next) {
     const authHeader = req.headers['authorization'];
+    // console.log(authHeader);
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'No token provided or malformed authorization header' });
     }
 
+
     const token = authHeader.split(' ')[1];
+    console.log(token);
+    
 
     const secretKey = process.env.JWT_SECRET; 
 
@@ -21,6 +26,10 @@ async function authCheck(req, res, next) {
 
         // Attach decoded data to the request object
         req.user = decoded;
+
+        console.log(req.user);
+        
+
 
         // Proceed to the next middleware
         next();

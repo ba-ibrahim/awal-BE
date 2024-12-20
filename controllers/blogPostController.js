@@ -4,16 +4,21 @@ const BlogPost = require("../models/BlogPost");
 
 const createBlogPost = async (req, res) => {
     const { title, content, author } = req.body;
+    const thumbnail = req.file?.path; // Get the Cloudinary image URL
+
     try {
-        // Create a new blog post
-        const newBlogPost = await BlogPost.create({ title, content, author });
-        
-        // Return the created blog post
+        // Create a new blog post with thumbnail
+        const newBlogPost = await BlogPost.create({ title, content, author, thumbnail });
+
         res.status(201).json(newBlogPost);
     } catch (error) {
-        res.status(500).json({ msg: 'Server Error ::: Blog Post Creation -- Blog Post Controller', error: error.message });
+        res.status(500).json({ 
+            msg: 'Server Error ::: Blog Post Creation -- Blog Post Controller', 
+            error: error.message 
+        });
     }
-}
+};
+
 
 const getBlogPosts = async (req, res) => {
     try {

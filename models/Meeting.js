@@ -12,22 +12,14 @@ const meetingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    zoomId: {
+    meetTime: {
         type: String,
         required: true
     },
-    zoomAssisstantId: {
+    meetDate: {
         type: String,
         required: true
-    },
-    joinUrl: {
-        type: String,
-        required: true
-    },
-    meetingTime: {
-        type: Date,
-        required: true
-    },
+    }
 }, { timestamps: true })
 
 

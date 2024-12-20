@@ -15,7 +15,7 @@ const app = express();
 
 // Apply CORS before routes
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow only your frontend origin
+  origin: '*', // Allow only your frontend origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
