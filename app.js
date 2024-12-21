@@ -9,8 +9,10 @@ dotenv.config();
 
 const routes = require("./routes/index");
 
-const port = process.env.PORT || 3000,
-      dbURI = process.env.DB_URI;
+const port = process.env.PORT || 3000
+      // dbURI = process.env.DB_URI;
+
+const dbURI = "mongodb+srv://ibrahimbenamara76:admin@cluster0.iqvmf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 const app = express();
 
