@@ -70,29 +70,23 @@ const updateUser = async (req, res) => {
 
 const updateProfileImage = async (req, res) => {
     try {
-        // Check if a file is uploaded
         if (!req.file) {
             return res.status(400).json({ error: "No file uploaded" });
         }
 
-        // Cloudinary URL for the uploaded image
         const imageUrl = req.file.path; 
 
-        // Get the user ID from req.user (assuming it's added by authCheck middleware)
         const userId = req.user.id;
 
-        // Update the user's profile picture in the database
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { profilePicture: imageUrl }, // Store the Cloudinary URL in the profilePicture field
-            { new: true } // Return the updated user data
+            { profilePicture: imageUrl },
         );
 
-        // Send the response back with the updated user data and image URL
         res.status(200).json({
             message: "Profile picture updated successfully",
-            profilePicture: imageUrl, // Return Cloudinary URL
-            user: updatedUser, // Optionally return the updated user data
+            profilePicture: imageUrl,
+            user: updatedUser, 
         });
     } catch (error) {
         console.error(error);

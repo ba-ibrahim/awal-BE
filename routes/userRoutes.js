@@ -13,7 +13,7 @@ router.get('/getUserById', authCheck, getUserById)
 
 router.put("/updateUser", authCheck, updateUser)
 
-router.put('/updateProfilePicture', authCheck, upload.single("file"), updateProfileImage)
+router.post('/updateProfilePicture', authCheck, upload.single("file"), updateProfileImage)
 
 
 module.exports = router
